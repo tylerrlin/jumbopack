@@ -1,62 +1,85 @@
-type FoodAttributes = Map<string, boolean>;
+/* eslint-disable @typescript-eslint/no-unused-vars */
+type FoodContains = Map<string, boolean>;
+type FoodDiet = Map<string, boolean>;
+type FoodMacros = Map<string, number>;
+type FoodAttributes = {
+    contains: FoodContains;
+    diet: FoodDiet;
+    macros: FoodMacros;
+};
+
+// | "vegan"
+// | "vegetarian"
+// | "pescatarian"
+// | "halal"
+// | "kosher"
+// | "gluten-free"
+
 type FoodMap = Map<string, FoodAttributes>;
 
 // Manually searching ingredients instead for accuracy
-// // Pull allergens from item logos
-// // Returns: Array of allergens/attributes from item logos (milk, vegan,
-// // vegetarian, halal) or empty array
-// function getAllergens(menuData, foodName, targetDate) {
-//     for (const day of menuData.days) {
-//         if (day.date === targetDate) {
-//             for (const item of day.menu_items || []) {
-//                 if (
-//                     item.food &&
-//                     item.food.name.toLowerCase() === foodName.toLowerCase()
-//                 ) {
-//                     return (item.food.icons?.food_icons || [])
-//                         .map((icon) => icon.slug)
-//                         .filter((name) => name);
-//                 }
-//             }
-//         }
-//     }
-//     return [];
-// }
+// Pull restrictions from food items by logos
+// Returns: Array of restrictions/attributes from item logos (milk, vegan,
+// vegetarian, halal) or empty array
+function getAllergens(menuData, foodName, targetDate) {
+    for (const day of menuData.days) {
+        if (day.date === targetDate) {
+            for (const item of day.menu_items || []) {
+                if (
+                    item.food &&
+                    item.food.name.toLowerCase() === foodName.toLowerCase()
+                ) {
+                    return (item.food.icons?.food_icons || [])
+                        .map((icon) => icon.slug)
+                        .filter((name) => name);
+                }
+            }
+        }
+    }
+    return [];
+}
 
 // Produce foodInfo structure
 // Returns: Map of food name keys with attribute values
-function getFoodInfo(menuData, targetDate) {
+export function getFoodInfo(menuData, targetDate) {
     const foods = getFoodItemsByDate(menuData, targetDate);
     const foodData: FoodMap = new Map();
-    for (const foodItem in foods) {
-        const attributes: FoodAttributes = new Map();
-        // hasBeef
-        attributes.set(
+    for (const foodItem of foods) {
+        const attributes: FoodAttributes = {
+            contains: new Map(),
+            diet: new Map(),
+            macros: new Map(),
+        };
+        const restrictions = getAllergens(menuData, foodItem, targetDate);
+
+        // attributes.macros.set(
+
+        //     getMacros(foodItem, menuData, targetDate);
+        // );
+
+        attributes.contains.set(
             "beef",
             hasIngredient(foodItem, "beef", menuData, targetDate)
         );
 
-        // hasChicken
-        attributes.set(
+        attributes.contains.set(
             "chicken",
             hasIngredient(foodItem, "chicken", menuData, targetDate)
         );
-        // hasPork
-        attributes.set(
+
+        attributes.contains.set(
             "pork",
             hasIngredient(foodItem, "pork", menuData, targetDate) ||
                 hasIngredient(foodItem, "bacon", menuData, targetDate)
         );
 
-        // hasDairy
-        attributes.set(
+        attributes.contains.set(
             "dairy",
             hasIngredient(foodItem, "milk", menuData, targetDate) ||
                 hasIngredient(foodItem, "cheese", menuData, targetDate)
         );
 
-        // hasSeafood
-        attributes.set(
+        attributes.contains.set(
             "seafood",
             hasIngredient(foodItem, "tuna", menuData, targetDate) ||
                 hasIngredient(foodItem, "salmon", menuData, targetDate) ||
@@ -77,31 +100,32 @@ function getFoodInfo(menuData, targetDate) {
                 hasIngredient(foodItem, "caviar", menuData, targetDate)
         );
 
-        attributes.set(
+        attributes.diet.set(
             "vegan",
-            !attributes.get("dairy") &&
-                !attributes.get("seafood") &&
-                !attributes.get("beef") &&
-                !attributes.get("chicken") &&
-                !attributes.get("pork")
+            !attributes.contains.get("dairy") &&
+                !attributes.contains.get("seafood") &&
+                !attributes.contains.get("beef") &&
+                !attributes.contains.get("chicken") &&
+                !attributes.contains.get("pork")
         );
 
-        attributes.set(
+        attributes.diet.set(
             "vegetarian",
-            !attributes.get("seafood") &&
-                !attributes.get("beef") &&
-                !attributes.get("chicken") &&
-                !attributes.get("pork")
+            !attributes.contains.get("seafood") &&
+                !attributes.contains.get("beef") &&
+                !attributes.contains.get("chicken") &&
+                !attributes.contains.get("pork")
         );
 
-        attributes.set(
-            "vegan",
-            !attributes.get("dairy") &&
-                !attributes.get("seafood") &&
-                !attributes.get("beef") &&
-                !attributes.get("chicken") &&
-                !attributes.get("pork")
+        attributes.diet.set(
+            "pescetarian",
+            !attributes.contains.get("beef") &&
+                !attributes.contains.get("chicken") &&
+                !attributes.contains.get("pork")
         );
+
+        attributes.diet.set("gluten-free", !restrictions.includes("gluten"));
+        attributes.diet.set("halal", restrictions.includes("halal"));
 
         foodData.set(foodItem, attributes);
     }
@@ -165,14 +189,9 @@ const available_macros = [
     "mcg_vitamin_d",
 ];
 
-// Retrieve specified macro for food item on a date YYYY-MM-DD
+// Retrieve nutrition info for food item on a date YYYY-MM-DD
 // Returns: macro value or null if macro cannot be found
-function getMacro(foodName, macro, menuData, targetDate) {
-    if (not(available_macros.includes(macro))) {
-        console.error("Error: Invalid macro specified.");
-        return null;
-    }
-
+export function getMacros(foodName, menuData, targetDate) {
     for (const day of menuData.days) {
         if (day.date === targetDate) {
             for (const item of day.menu_items || []) {
@@ -181,7 +200,9 @@ function getMacro(foodName, macro, menuData, targetDate) {
                     item.food.name.toLowerCase() === foodName.toLowerCase()
                 ) {
                     return item.food.rounded_nutrition_info
-                        ? item.food.rounded_nutrition_info[macro]
+                        ? new Map(
+                              Object.entries(item.food.rounded_nutrition_info)
+                          )
                         : null;
                 }
             }
