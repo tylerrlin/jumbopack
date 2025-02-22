@@ -5,7 +5,9 @@ interface Question {
     isOpenResponse: boolean; // True for open response, false for multiple choice
 }
 
-const background_style: ()
+// const background_style: () => {
+//     return 0;
+// }
 
 const questions: Question[] = [
     {
@@ -24,7 +26,7 @@ export default function Home() {
     console.log(myString); // Output: "The number is 42"
     return (
         <>
-            <div className="h-"+ bg-green1 align-center">
+            <div className="h-[500vh] bg-green1 align-center">
                 <div>
                     {questions.map((question, index) => (
                         <div key={index}>
