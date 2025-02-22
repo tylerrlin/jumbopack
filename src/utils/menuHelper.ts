@@ -1,0 +1,211 @@
+type FoodAttributes = Map<string, boolean>;
+type FoodMap = Map<string, FoodAttributes>;
+
+// Manually searching ingredients instead for accuracy
+// // Pull allergens from item logos
+// // Returns: Array of allergens/attributes from item logos (milk, vegan,
+// // vegetarian, halal) or empty array
+// function getAllergens(menuData, foodName, targetDate) {
+//     for (const day of menuData.days) {
+//         if (day.date === targetDate) {
+//             for (const item of day.menu_items || []) {
+//                 if (
+//                     item.food &&
+//                     item.food.name.toLowerCase() === foodName.toLowerCase()
+//                 ) {
+//                     return (item.food.icons?.food_icons || [])
+//                         .map((icon) => icon.slug)
+//                         .filter((name) => name);
+//                 }
+//             }
+//         }
+//     }
+//     return [];
+// }
+
+// Produce foodInfo structure
+// Returns: Map of food name keys with attribute values
+function getFoodInfo(menuData, targetDate) {
+    const foods = getFoodItemsByDate(menuData, targetDate);
+    const foodData: FoodMap = new Map();
+    for (const foodItem in foods) {
+        const attributes: FoodAttributes = new Map();
+        // hasBeef
+        attributes.set(
+            "beef",
+            hasIngredient(foodItem, "beef", menuData, targetDate)
+        );
+
+        // hasChicken
+        attributes.set(
+            "chicken",
+            hasIngredient(foodItem, "chicken", menuData, targetDate)
+        );
+        // hasPork
+        attributes.set(
+            "pork",
+            hasIngredient(foodItem, "pork", menuData, targetDate) ||
+                hasIngredient(foodItem, "bacon", menuData, targetDate)
+        );
+
+        // hasDairy
+        attributes.set(
+            "dairy",
+            hasIngredient(foodItem, "milk", menuData, targetDate) ||
+                hasIngredient(foodItem, "cheese", menuData, targetDate)
+        );
+
+        // hasSeafood
+        attributes.set(
+            "seafood",
+            hasIngredient(foodItem, "tuna", menuData, targetDate) ||
+                hasIngredient(foodItem, "salmon", menuData, targetDate) ||
+                hasIngredient(foodItem, "shrimp", menuData, targetDate) ||
+                hasIngredient(foodItem, "lobster", menuData, targetDate) ||
+                hasIngredient(foodItem, "crab", menuData, targetDate) ||
+                hasIngredient(foodItem, "clam", menuData, targetDate) ||
+                hasIngredient(foodItem, "oyster", menuData, targetDate) ||
+                hasIngredient(foodItem, "mussel", menuData, targetDate) ||
+                hasIngredient(foodItem, "scallop", menuData, targetDate) ||
+                hasIngredient(foodItem, "squid", menuData, targetDate) ||
+                hasIngredient(foodItem, "octopus", menuData, targetDate) ||
+                hasIngredient(foodItem, "anchovy", menuData, targetDate) ||
+                hasIngredient(foodItem, "anchovies", menuData, targetDate) ||
+                hasIngredient(foodItem, "sardine", menuData, targetDate) ||
+                hasIngredient(foodItem, "mackerel", menuData, targetDate) ||
+                hasIngredient(foodItem, "herring", menuData, targetDate) ||
+                hasIngredient(foodItem, "caviar", menuData, targetDate)
+        );
+
+        attributes.set(
+            "vegan",
+            !attributes.get("dairy") &&
+                !attributes.get("seafood") &&
+                !attributes.get("beef") &&
+                !attributes.get("chicken") &&
+                !attributes.get("pork")
+        );
+
+        attributes.set(
+            "vegetarian",
+            !attributes.get("seafood") &&
+                !attributes.get("beef") &&
+                !attributes.get("chicken") &&
+                !attributes.get("pork")
+        );
+
+        attributes.set(
+            "vegan",
+            !attributes.get("dairy") &&
+                !attributes.get("seafood") &&
+                !attributes.get("beef") &&
+                !attributes.get("chicken") &&
+                !attributes.get("pork")
+        );
+
+        foodData.set(foodItem, attributes);
+    }
+
+    return foodData;
+}
+
+// Pull all items for a date (YYYY-MM-DD)
+// Returns: Array of items, or empty array if empty menu for that day
+function getFoodItemsByDate(menuData, targetDate) {
+    for (const day of menuData.days) {
+        if (day.date === targetDate) {
+            return day.menu_items
+                .filter((item) => item.food && item.food.name)
+                .map((item) => item.food.name);
+        }
+    }
+    return [];
+}
+
+// Check if food item for a date (YYYY-MM-DD) contains a specific ingredient
+// Returns: null if food does not exist for specified day, true/false if item contains ingredient or not
+function hasIngredient(foodName, ingredient, menuData, targetDate) {
+    for (const day of menuData.days) {
+        if (day.date === targetDate) {
+            for (const item of day.menu_items || []) {
+                if (
+                    item.food &&
+                    item.food.name.toLowerCase() === foodName.toLowerCase()
+                ) {
+                    const ingredients = item.food.ingredients
+                        ? item.food.ingredients.toLowerCase()
+                        : "";
+                    return ingredients.includes(ingredient.toLowerCase());
+                }
+            }
+        }
+    }
+    return false;
+}
+
+const available_macros = [
+    "calories",
+    "g_fat",
+    "g_saturated_fat",
+    "g_trans_fat",
+    "mg_cholesterol",
+    "g_carbs",
+    "g_added_sugar",
+    "mg_potassium",
+    "mg_sodium",
+    "g_fiber",
+    "g_protein",
+    "mg_iron",
+    "mg_calcium",
+    "mg_vitamin_c",
+    "iu_vitamin_a",
+    "re_vitamin_a",
+    "mcg_vitamin_a",
+    "mg_vitamin_d",
+    "mcg_vitamin_d",
+];
+
+// Retrieve specified macro for food item on a date YYYY-MM-DD
+// Returns: macro value or null if macro cannot be found
+function getMacro(foodName, macro, menuData, targetDate) {
+    if (not(available_macros.includes(macro))) {
+        console.error("Error: Invalid macro specified.");
+        return null;
+    }
+
+    for (const day of menuData.days) {
+        if (day.date === targetDate) {
+            for (const item of day.menu_items || []) {
+                if (
+                    item.food &&
+                    item.food.name.toLowerCase() === foodName.toLowerCase()
+                ) {
+                    return item.food.rounded_nutrition_info
+                        ? item.food.rounded_nutrition_info[macro]
+                        : null;
+                }
+            }
+        }
+    }
+    return null;
+}
+
+// Example usage
+/* fetchMenu(menuUrl).then((menuData) => {
+    if (menuData) {
+        // Check if Grilled Tuna melt on 2025-02-22 contains rye bread
+        console.log(
+            hasIngredient(
+                "Grilled Tuna Melt",
+                "rye bread",
+                menuData,
+                "2025-02-22"
+            )
+        );
+
+        // Return Grilled Tuna Melt on 2025-02-18's calories
+        console.log(
+            getMacro("Grilled Tuna Melt", "calories", "2025-02-18", menuData)
+        );
+    }
+}); */
