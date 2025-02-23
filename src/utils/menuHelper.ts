@@ -233,6 +233,7 @@ export function getServingInfo(foodName, menuData, targetDate) {
         }
     }
 }
+
 // Example usage
 /* fetchMenu(menuUrl).then((menuData) => {
     if (menuData) {
