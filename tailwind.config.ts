@@ -21,6 +21,7 @@ export default {
                 green3: "rgb(65, 89, 66)",
 
                 green4: "rgb(58, 77, 66)",
+                sidebar: "rgb(217, 215, 206)",
                 // This is just for John because I think it's nice
                 niceTeal: "rgb(119, 176, 187)",
             },
