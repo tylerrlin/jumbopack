@@ -23,7 +23,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${inter.variable} antialiased bg-background`}>
+            <body
+                className={`${inter.variable} antialiased bg-background flex justify-center`}
+            >
                 {children}
             </body>
         </html>
