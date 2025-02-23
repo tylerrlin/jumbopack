@@ -27,18 +27,18 @@ const MenuHeaderCard = ({
     return (
         <div
             className={cn(
-                "relative md:max-w-[180px] flex-grow h-[90px] rounded-xl flex-col justify-center items-center w-full select-none",
+                "relative md:max-w-[180px] flex-grow lg:h-[90px] h-[80px] rounded-xl flex-col justify-center items-center w-full select-none duration-200 transition-all",
                 dropdown_options
-                    ? "hover:cursor-pointer hover:bg-green1 hover:text-black duration-200 transition-all"
+                    ? "hover:cursor-pointer hover:bg-opacity-70"
                     : "pointer-events-none",
                 className
             )}
             onClick={() => setDropdownOpen(!dropdownOpen)}
         >
-            <div className="flex justify-start text-sm font-semibold pl-[15px] pt-[15px] h-[10%] w-full">
+            <div className="flex justify-start lg:text-sm text-xs font-semibold pl-[15px] pt-[15px] h-[10%] w-full">
                 {title}
             </div>
-            <div className="text-xl font-semibold flex pl-[20px] items-end pb-[22px] h-[90%] w-full">
+            <div className="lg:text-xl text-base font-semibold flex pl-[20px] items-end pb-[22px] h-[90%] w-full">
                 {value}
             </div>
             {dropdown_options && (
