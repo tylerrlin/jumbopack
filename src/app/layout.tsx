@@ -19,7 +19,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-    title: "JumBeli",
+    title: "JumBelly",
     description: "",
 };
 
@@ -34,7 +34,9 @@ export default function RootLayout({
                 className={`${montserrat.variable} ${inter.variable} antialiased bg-background flex justify-center`}
             >
                 <Sidebar />
-                <div className="h-full w-full">{children}</div>
+                <div className="h-screen w-full overflow-y-scroll">
+                    {children}
+                </div>
             </body>
         </html>
     );

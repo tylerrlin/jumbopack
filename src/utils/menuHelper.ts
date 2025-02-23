@@ -2,10 +2,12 @@
 type FoodContains = Map<string, boolean>;
 type FoodDiet = Map<string, boolean>;
 type FoodMacros = Map<string, number>;
+type FoodSize = string;
 type FoodAttributes = {
     contains: FoodContains;
     diet: FoodDiet;
     macros: FoodMacros;
+    sizes: FoodSize;
 };
 type FoodMap = Map<string, FoodAttributes>;
 
@@ -48,6 +50,7 @@ export function getFoodInfo(menuData, targetDate) {
             contains: new Map(),
             diet: new Map(),
             macros: new Map(),
+            sizes: getServingInfo(foodItem, menuData, targetDate),
         };
         const restrictions = getAllergens(menuData, foodItem, targetDate);
 
