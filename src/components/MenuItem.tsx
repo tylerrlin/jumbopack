@@ -34,11 +34,22 @@ interface MenuItemProps {
     className?: string;
     allergens?: string[];
     name: string;
+    setActiveItem: (index: number) => void;
+    index: number;
 }
 
-const MenuItem = ({ className, name, allergens }: MenuItemProps) => {
+const MenuItem = ({
+    className,
+    name,
+    allergens,
+    setActiveItem,
+    index,
+}: MenuItemProps) => {
     return (
-        <div className="lg:max-w-[45%] w-full bg-white h-[170px] rounded-xl flex flex-col justify-evenly items-center">
+        <div
+            className="xl:max-w-[45%] w-full bg-white h-[170px] rounded-xl flex flex-col justify-evenly items-center hover:opacity-60 hover:cursor-pointer duration-200"
+            onClick={() => setActiveItem(index)}
+        >
             <div className="w-full justify-start flex pl-[25px] text-xl font-semibold pt-[10px]">
                 {name}
             </div>
@@ -53,7 +64,7 @@ const MenuItem = ({ className, name, allergens }: MenuItemProps) => {
                         </div>
                     ))}
             </div>
-            <div className="h-[70px] w-full flex items-center justify-start pl-[30px] md:gap-5">
+            <div className="h-[70px] w-full flex items-center justify-start pl-[30px] md:gap-4">
                 <ItemBar
                     amount={50}
                     max={100}
