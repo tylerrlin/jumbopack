@@ -1,10 +1,22 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
-type MealTypes = "breakfast" | "lunch" | "dinner" | "daily" | "late-night";
+
+type DHall = "dewick-dining"
+    | "hodgdon-food-on-the-run"
+    | "carmichael-dining-hall"
+    | "commons-marketplace"
+    | "kindlevan-cafe"
+    | "hotung-cafe"
+    | "tower-cafe"
+    | "smfa"
+    | "pax-et-lox-glatt-kosher-deli"
+    | "mugar-cafe";
+
+type MealTypes = Map<DHall, string[]>
 
 type QuestionResponse = {
     dhall: string,
-    type: MealTypes,
+    mealType: "breakfast" | "lunch" | "dinner" | "daily" | "late-night";
     diets: "vegan" | "vegetarian" | "pescatarian" | "halal" | "gluten-free"
     | "pescetarian";
     restrictions: "chicken" | "beef" | "dairy" | "pork" | "seafood";
@@ -31,6 +43,21 @@ function mapToObject<T>(map: Map<string, T> | T): T {
         ) as T;
     }
     return map;
+}
+
+const populateMealTypes = () => {
+    const mealTypes = new Map<DHall, string[]>();
+    mealTypes.set("dewick-dining", ["breakfast", "lunch", "dinner"]);
+    mealTypes.set("hodgdon-food-on-the-run", ["daily"]);
+    mealTypes.set("carmichael-dining-hall", ["breakfast", "lunch", "dinner"]);
+    mealTypes.set("commons-marketplace", ["daily", "dinner", "late-night"]);
+    mealTypes.set("kindlevan-cafe", ["daily"]);
+    mealTypes.set("hotung-cafe", ["daily"]);
+    mealTypes.set("tower-cafe", ["daily"]);
+    mealTypes.set("smfa", ["daily", "dinner"]);
+    mealTypes.set("pax-et-lox-glatt-kosher-deli", ["lunch", "dinner"]);
+    mealTypes.set("mugar-cafe", ["daily"]);
+    return mealTypes;
 }
 
 // get 
