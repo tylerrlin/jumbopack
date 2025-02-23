@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import Sidebar from "@/components/Sidebar";
+
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 config.autoAddCss = false;
@@ -26,6 +28,7 @@ export default function RootLayout({
             <body
                 className={`${inter.variable} antialiased bg-background flex justify-center`}
             >
+                <Sidebar />
                 {children}
             </body>
         </html>

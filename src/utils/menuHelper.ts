@@ -52,10 +52,10 @@ export function getFoodInfo(menuData, targetDate) {
         };
         const restrictions = getAllergens(menuData, foodItem, targetDate);
 
-        // attributes.macros.set(
-
-        //     getMacros(foodItem, menuData, targetDate);
-        // );
+        const entries = getMacros(foodItem, menuData, targetDate);
+        for (const [key, value] of entries) {
+            attributes.macros.set(key, value);
+        }
 
         attributes.contains.set(
             "beef",
@@ -200,9 +200,10 @@ export function getMacros(foodName, menuData, targetDate) {
                     item.food.name.toLowerCase() === foodName.toLowerCase()
                 ) {
                     return item.food.rounded_nutrition_info
-                        ? new Map(
-                              Object.entries(item.food.rounded_nutrition_info)
-                          )
+                        ? (Object.entries(item.food.rounded_nutrition_info) as [
+                              string,
+                              number
+                          ][])
                         : null;
                 }
             }
