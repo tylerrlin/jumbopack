@@ -34,9 +34,7 @@ export default function RootLayout({
                 className={`${montserrat.variable} ${inter.variable} antialiased bg-background flex justify-center`}
             >
                 <Sidebar />
-                <div className="h-screen w-full overflow-y-scroll">
-                    {children}
-                </div>
+                <div className="h-screen w-full overflow-y-scroll">{children}</div>
             </body>
         </html>
     );
