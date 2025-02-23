@@ -9,7 +9,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                inter: ["Inter", "sans-serif"],
+                inter: ["var(--font-inter)", "sans-serif"],
+                montserrat: ["var(--font-montserrat)", "sans-serif"],
             },
             colors: {
                 background: "rgb(239, 239, 239)",

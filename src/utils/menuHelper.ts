@@ -7,6 +7,7 @@ type FoodAttributes = {
     diet: FoodDiet;
     macros: FoodMacros;
 };
+type FoodMap = Map<string, FoodAttributes>;
 
 // | "vegan"
 // | "vegetarian"
@@ -14,8 +15,6 @@ type FoodAttributes = {
 // | "halal"
 // | "kosher"
 // | "gluten-free"
-
-type FoodMap = Map<string, FoodAttributes>;
 
 // Manually searching ingredients instead for accuracy
 // Pull restrictions from food items by logos
@@ -209,9 +208,28 @@ export function getMacros(foodName, menuData, targetDate) {
             }
         }
     }
-    return null;
 }
 
+// Retrieve serving size and units
+export function getServingInfo(foodName, menuData, targetDate) {
+    for (const day of menuData.days) {
+        if (day.date === targetDate) {
+            for (const item of day.menu_items) {
+                // Extract serving size and format as a string
+                const servingSizeAmount =
+                    item.food.serving_size_info?.serving_size_amount;
+                const servingSizeUnit =
+                    item.food.serving_size_info?.serving_size_unit;
+                const servingInfo =
+                    servingSizeAmount && servingSizeUnit
+                        ? `${servingSizeAmount} ${servingSizeUnit}`
+                        : "Unknown"; // Fallback if data is missing
+
+                return servingInfo;
+            }
+        }
+    }
+}
 // Example usage
 /* fetchMenu(menuUrl).then((menuData) => {
     if (menuData) {
