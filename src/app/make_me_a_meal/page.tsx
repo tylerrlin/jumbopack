@@ -1,6 +1,11 @@
 // import StorageBreakdown from "@/components/BreakdownComponent";
 
-"use client";
+"use client"
+
+import React, { useRef } from "react";
+
+
+
 
 interface Question {
     text: string; // The question in string format
@@ -13,7 +18,9 @@ const questions: Question[] = [
     {
         text: "Sample question 1, MQ",
         isOpenResponse: false,
-        choices: ["4", "5", "6"],
+        choices: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco ",
+             "laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+              "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."],
     },
     {
         text: "What is 2 + 2?",
@@ -44,6 +51,14 @@ const colors: string[] = [
 
 export default function Home() {
 
+      // Create an array of refs for the questions
+  const questionRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Function to scroll to a specific question based on its index
+  const scrollToQuestion = (index: number) => {
+    questionRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
+  };
+
      // Scrolls up one full screen height
     const scrollUp = () => {
         window.scrollBy({
@@ -71,7 +86,8 @@ export default function Home() {
             <div className="flex flex-col md:flex-row  md: gap-4 px-8 md:px-0 my-2 ">
                 {index !== numQuestions - 1 && 
                     (<button className="bg-green3 text-white p-2 rounded"
-                    onClick={scrollDown}>
+                    onClick={() => scrollToQuestion(index + 1)}
+>
                     Next
                     </button>) }
                 {index == numQuestions - 1 && 
@@ -81,7 +97,8 @@ export default function Home() {
                     </button>) }
                 {index !== 0 && (
                     <button className="bg-green2 text-white p-2 rounded"
-                    onClick={scrollUp}>
+                    onClick={() => scrollToQuestion(index - 1)}
+>
                         Previous
                     
                     </button>
@@ -110,7 +127,7 @@ export default function Home() {
                 <input
                   type="checkbox"
                   id={`choice-${index}`}
-                  className="mr-2 appearance-none size-6 border border-gray-300 rounded checked:bg-green2 checked:border-green3"
+                  className="flex-shrink-0 mr-2 appearance-none h-6 w-6 border border-gray-300 rounded checked:bg-green2 checked:border-green3"
                 />
                 <label htmlFor={`choice-${index}`} className="appearance-none text-lg font-extrabold">{choice}</label>
               </div>
@@ -123,10 +140,10 @@ export default function Home() {
     const question_html=(index: number): React.ReactNode => {
         const question = questions[index];
         return  <>
-                    <h2 className="absolute bottom-1/2  left-[20%] font-Inter text-7xl pl-400px"> {question.text}
+                    <h2 className="absolute bottom-1/2  left-[20%] font-inter text-7xl pl-400px"> {question.text}
                     </h2>
-                    <h2 className="absolute bottom-1/4  left-[20%] font-sans text-7xl pl-400px"> {question.text}
-                    </h2>
+                    {/* <h2 className="absolute bottom-1/4  left-[20%] font-sans text-7xl pl-400px"> {question.text}
+                    </h2> */}
                     <div className="absolute top-1/2 left-[20%] flex flex-col right-[20%]  py-6 gap-1">
                         {question.isOpenResponse ? 
                             (<textarea className="rounded-lg bg-transparent  hover:bg-green1dark placeholder-white text-gray-200 pl-[14px]"
@@ -145,7 +162,8 @@ export default function Home() {
             <div className={bg_tailwind(numQuestions)}>
                 <div>
                     {questions.map((question, index) => (
-                        <div key={index} className={question_style(index) + "items-center h-screen"}>
+                        <div key={index} className={question_style(index) + "items-center h-screen"} 
+                            ref={(el) => (questionRefs.current[index] = el)}>
                             {question_html(index)}
                         </div>
                     ))}
