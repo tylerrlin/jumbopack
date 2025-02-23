@@ -123,9 +123,9 @@ export default function Home() {
     const question_html=(index: number): React.ReactNode => {
         const question = questions[index];
         return  <>
-                    <h2 className="absolute bottom-1/2  left-[20%] font-(family-name:Inter) text-7xl pl-400px"> {question.text}
+                    <h2 className="absolute bottom-1/2  left-[20%] font-Inter text-7xl pl-400px"> {question.text}
                     </h2>
-                    <h2 className="absolute bottom-1/2  left-[20%] font-sans text-7xl pl-400px"> {question.text}
+                    <h2 className="absolute bottom-1/4  left-[20%] font-sans text-7xl pl-400px"> {question.text}
                     </h2>
                     <div className="absolute top-1/2 left-[20%] flex flex-col right-[20%]  py-6 gap-1">
                         {question.isOpenResponse ? 
