@@ -48,16 +48,23 @@ export default function Home() {
                       "trans-fats": a boolean indicating whether the user wants trans fats in this meal or not
 
                       The menu data will come in a JSON format like so:
-                      
+                      "name":["contains": Describes things in the item. beef, chicken, pork, dairy, seafood, as booleans,
+                              "diet": Describes diets it adheres to. vegan, vegetarian, pescetarian, gluten-free, halal as booleans.
+                              "macros": Lists nutrition info for the food, including calories per serving, protein, carbs, trans fats, saturated fats, fiber, and vitamins 
+                              "sizes": Lists serving size and units, for your use in returning the recommended number of servings
+                              ]
+
 
                     After evaluating all options, output exactly four menu
-                    items that form a meal best matching the user's criteria.
+                    items that form a meal best matching the user's criteria, ensuring
+                    that the calories and other macros add up to their calories desired.
                     Your response must be a valid JSON array containing
                     EXACTLY four objects. Each object should
                     only include:
                          - "name": The name of the menu item.
-                         - "servings": Recommended number of servings, as an integer.
-
+                         - "servings": Recommended number of servings, as an integer. If you are below the calorie
+                         target, you can increase the number of servings.
+                    
 
                     If you cannot find four items that fit the user's criteria,
                     fill in the rest of the names with NO_FOOD_FOUND.
@@ -72,49 +79,49 @@ export default function Home() {
                 },
             });
 
-            // const userRequest = {
-            //     diets: ["halal"],
-            //     restrictions: ["beef"],
-            //     calories: 800,
-            //     protein: 20,
-            //     carbs: 45,
-            //     "trans-fats": false,
-            // };
+            const userRequest = {
+                diets: ["vegetarian"],
+                restrictions: ["chicken"],
+                calories: 800,
+                protein: 20,
+                carbs: 45,
+                "trans-fats": false,
+            };
 
-            // const finalPrompt = JSON.stringify({
-            //     ...userRequest,
-            //     menuData: menuObject,
-            // });
+            const finalPrompt = JSON.stringify({
+                ...userRequest,
+                menuData: menuObject,
+            });
 
-            // const generationConfig = {
-            //     temperature: 0.3,
-            //     responseMimeType: "application/json",
-            // };
-            // model
-            //     .generateContent({
-            //         contents: [
-            //             { role: "user", parts: [{ text: finalPrompt }] },
-            //         ],
-            //         generationConfig,
-            //     })
-            //     .then((response) => {
-            //         console.log(
-            //             JSON.parse(
-            //                 response.response.candidates[0].content.parts[0]
-            //                     .text
-            //             )
-            //         );
-            //     });
+            const generationConfig = {
+                temperature: 0.8,
+                responseMimeType: "application/json",
+            };
+            model
+                .generateContent({
+                    contents: [
+                        { role: "user", parts: [{ text: finalPrompt }] },
+                    ],
+                    generationConfig,
+                })
+                .then((response) => {
+                    console.log(
+                        JSON.parse(
+                            response.response.candidates[0].content.parts[0]
+                                .text
+                        )
+                    );
+                });
 
-            const macros = getMacros("Halal Chicken Curry", data, "2025-02-22");
-            const servingInfo = getServingInfo(
-                "Halal Chicken Curry",
-                data,
-                "2025-02-22"
-            );
-            console.log(macros);
-            console.log(servingInfo);
-            console.log(menuObject);
+            // const macros = getMacros("Halal Chicken Curry", data, "2025-02-22");
+            // const servingInfo = getServingInfo(
+            //     "Halal Chicken Curry",
+            //     data,
+            //     "2025-02-22"
+            // );
+            // console.log(macros);
+            // console.log(servingInfo);
+            // console.log(menuObject);
         });
 
     return <>{<StorageBreakdown />}</>;
