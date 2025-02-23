@@ -13,7 +13,6 @@ interface Question {
     choices: string[]; //Only open for multiple choice questions
 }
 
-
 const questions: Question[] = [
     {
         text: "Sample question 1, MQ",
