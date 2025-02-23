@@ -6,7 +6,7 @@ export default function Home() {
     return (
         <>
             <StorageBreakdown />
-            <h1>{a} </h1>
+            <h1>Hello</h1>
         </>
     );
 }
