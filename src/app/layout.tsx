@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 import "./globals.css";
 
 import Sidebar from "@/components/Sidebar";
@@ -13,8 +13,13 @@ const inter = Inter({
     subsets: ["latin"],
 });
 
+const montserrat = Montserrat({
+    variable: "--font-montserrat",
+    subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-    title: "JumBeli",
+    title: "JumBelly",
     description: "",
 };
 
@@ -26,10 +31,10 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body
-                className={`${inter.variable} antialiased bg-background flex justify-center`}
+                className={`${montserrat.variable} ${inter.variable} antialiased bg-background flex justify-center`}
             >
                 <Sidebar />
-                {children}
+                <div className="h-screen w-full overflow-y-scroll">{children}</div>
             </body>
         </html>
     );
